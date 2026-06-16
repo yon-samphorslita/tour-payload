@@ -9,12 +9,7 @@ WORKDIR /app
 
 COPY package.json package-lock.json* pnpm-lock.yaml* yarn.lock* ./
 
-RUN \
-  if [ -f package-lock.json ]; then npm ci; \
-  elif [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
-  else npm install; \
-  fi
+RUN npm install
 
 # Build app
 FROM base AS builder
