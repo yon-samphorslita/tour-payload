@@ -1,4 +1,4 @@
-import { postgresAdapter } from '@payloadcms/db-postgres'
+import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
@@ -19,29 +19,37 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
+
   collections: [Users, Media],
+
   editor: lexicalEditor(),
+
   secret: process.env.PAYLOAD_SECRET || '',
+
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
-  db: postgresAdapter({
-    pool: {
-      connectionString: process.env.DATABASE_URL || '',
-    },
+
+  db: mongooseAdapter({
+    url: process.env.DATABASE_URI || '',
   }),
+
   sharp,
+
   plugins: [
     s3Storage({
-      collections: { 'media': true },
-      bucket: process.env.R2_BUCKET,
+      collections: {
+        media: true,
+      },
+      bucket: process.env.S3_BUCKET || '',
       config: {
-        endpoint: process.env.R2_ENDPOINT, // from Cloudflare dashboard
         credentials: {
-          accessKeyId: process.env.R2_ACCESS_KEY_ID,
-          secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+          accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+          secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
         },
-        region: 'auto',
+        region: process.env.S3_REGION || 'auto',
+        endpoint: process.env.S3_ENDPOINT || '',
+        forcePathStyle: true,
       },
     }),
   ],

@@ -84,7 +84,7 @@ export interface Config {
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: number;
+    defaultIDType: string;
   };
   fallbackLocale: null;
   globals: {};
@@ -122,7 +122,7 @@ export interface UserAuthOperations {
  * via the `definition` "users".
  */
 export interface User {
-  id: number;
+  id: string;
   role?: ('admin' | 'user') | null;
   updatedAt: string;
   createdAt: string;
@@ -148,10 +148,10 @@ export interface User {
  * via the `definition` "media".
  */
 export interface Media {
-  id: number;
+  id: string;
   alt?: string | null;
   category?: ('receipt' | 'invoice' | 'booking' | 'contract' | 'photo') | null;
-  uploadedBy?: (number | null) | User;
+  uploadedBy?: (string | null) | User;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -169,7 +169,7 @@ export interface Media {
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: number;
+  id: string;
   key: string;
   data:
     | {
@@ -186,20 +186,20 @@ export interface PayloadKv {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: number;
+  id: string;
   document?:
     | ({
         relationTo: 'users';
-        value: number | User;
+        value: string | User;
       } | null)
     | ({
         relationTo: 'media';
-        value: number | Media;
+        value: string | Media;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: number | User;
+    value: string | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -209,10 +209,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: number;
+  id: string;
   user: {
     relationTo: 'users';
-    value: number | User;
+    value: string | User;
   };
   key?: string | null;
   value?:
@@ -232,7 +232,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: number;
+  id: string;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
