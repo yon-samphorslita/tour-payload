@@ -8,6 +8,12 @@ import { s3Storage } from '@payloadcms/storage-s3'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { Sales } from './collections/Sales'
+import { Purchases } from './collections/Purchases'
+import { Destinations } from './collections/Destinations'
+import { Services } from './collections/Services'
+import { RecordMedia } from './collections/RecordMedia'
+import { Clients } from './collections/Clients'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -20,7 +26,7 @@ export default buildConfig({
     },
   },
 
-  collections: [Users, Media],
+  collections: [Users, Media, Sales, Destinations, RecordMedia, Purchases, Services, Clients],
 
   editor: lexicalEditor(),
 
@@ -38,6 +44,7 @@ export default buildConfig({
 
   plugins: [
     s3Storage({
+      alwaysInsertFields: true,
       collections: {
         media: true,
       },

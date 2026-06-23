@@ -69,6 +69,12 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    sales: Sale;
+    destinations: Destination;
+    'record-media': RecordMedia;
+    purchases: Purchase;
+    services: Service;
+    clients: Client;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,6 +84,12 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    sales: SalesSelect<false> | SalesSelect<true>;
+    destinations: DestinationsSelect<false> | DestinationsSelect<true>;
+    'record-media': RecordMediaSelect<false> | RecordMediaSelect<true>;
+    purchases: PurchasesSelect<false> | PurchasesSelect<true>;
+    services: ServicesSelect<false> | ServicesSelect<true>;
+    clients: ClientsSelect<false> | ClientsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -123,7 +135,8 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: string;
-  role?: ('admin' | 'user') | null;
+  role: 'admin' | 'staff';
+  name?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -151,6 +164,7 @@ export interface Media {
   id: string;
   alt?: string | null;
   category?: ('receipt' | 'invoice' | 'booking' | 'contract' | 'photo') | null;
+  prefix?: string | null;
   uploadedBy?: (string | null) | User;
   updatedAt: string;
   createdAt: string;
@@ -163,6 +177,133 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sales".
+ */
+export interface Sale {
+  id: string;
+  /**
+   * Optional when a client is linked
+   */
+  customerName?: string | null;
+  receiptCode: string;
+  status: 'draft' | 'confirmed' | 'paid';
+  notes?: string | null;
+  /**
+   * Optional — link this sale to a company client
+   */
+  client?: (string | null) | Client;
+  /**
+   * Optional — link or create the purchase order that fulfills this sale
+   */
+  purchase?: (string | null) | Purchase;
+  /**
+   * Invoices, receipts, contracts, or product photos for this sale
+   */
+  images?: (string | Media)[] | null;
+  createdBy?: (string | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clients".
+ */
+export interface Client {
+  id: string;
+  companyName: string;
+  vatNumber?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "purchases".
+ */
+export interface Purchase {
+  id: string;
+  supplierName: string;
+  receiptCode: string;
+  status: 'draft' | 'confirmed' | 'paid';
+  lineItems: {
+    description: string;
+    quantity: number;
+    unitPrice: number;
+    id?: string | null;
+  }[];
+  notes?: string | null;
+  /**
+   * Supplier invoices, receipts, or product photos for this purchase
+   */
+  images?: (string | Media)[] | null;
+  createdBy?: (string | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "destinations".
+ */
+export interface Destination {
+  id: string;
+  name: string;
+  country?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  price?: number | null;
+  featuredImage?: (string | null) | Media;
+  gallery?: (string | Media)[] | null;
+  featured?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "record-media".
+ */
+export interface RecordMedia {
+  id: string;
+  alt?: string | null;
+  category?: ('receipt' | 'invoice' | 'booking' | 'contract' | 'photo') | null;
+  uploadedBy?: (string | null) | User;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services".
+ */
+export interface Service {
+  id: string;
+  title: string;
+  description: string;
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -195,6 +336,30 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: string | Media;
+      } | null)
+    | ({
+        relationTo: 'sales';
+        value: string | Sale;
+      } | null)
+    | ({
+        relationTo: 'destinations';
+        value: string | Destination;
+      } | null)
+    | ({
+        relationTo: 'record-media';
+        value: string | RecordMedia;
+      } | null)
+    | ({
+        relationTo: 'purchases';
+        value: string | Purchase;
+      } | null)
+    | ({
+        relationTo: 'services';
+        value: string | Service;
+      } | null)
+    | ({
+        relationTo: 'clients';
+        value: string | Client;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -244,6 +409,7 @@ export interface PayloadMigration {
  */
 export interface UsersSelect<T extends boolean = true> {
   role?: T;
+  name?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -268,6 +434,7 @@ export interface UsersSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   category?: T;
+  prefix?: T;
   uploadedBy?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -280,6 +447,100 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sales_select".
+ */
+export interface SalesSelect<T extends boolean = true> {
+  customerName?: T;
+  receiptCode?: T;
+  status?: T;
+  notes?: T;
+  client?: T;
+  purchase?: T;
+  images?: T;
+  createdBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "destinations_select".
+ */
+export interface DestinationsSelect<T extends boolean = true> {
+  name?: T;
+  country?: T;
+  description?: T;
+  price?: T;
+  featuredImage?: T;
+  gallery?: T;
+  featured?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "record-media_select".
+ */
+export interface RecordMediaSelect<T extends boolean = true> {
+  alt?: T;
+  category?: T;
+  uploadedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "purchases_select".
+ */
+export interface PurchasesSelect<T extends boolean = true> {
+  supplierName?: T;
+  receiptCode?: T;
+  status?: T;
+  lineItems?:
+    | T
+    | {
+        description?: T;
+        quantity?: T;
+        unitPrice?: T;
+        id?: T;
+      };
+  notes?: T;
+  images?: T;
+  createdBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services_select".
+ */
+export interface ServicesSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clients_select".
+ */
+export interface ClientsSelect<T extends boolean = true> {
+  companyName?: T;
+  vatNumber?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

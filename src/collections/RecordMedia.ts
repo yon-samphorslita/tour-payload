@@ -1,7 +1,10 @@
 import type { CollectionConfig } from 'payload'
 
-export const Media: CollectionConfig = {
-  slug: 'media',
+const isStaffOrAdmin = ({ req }: any) =>
+  req.user?.role === 'staff' || req.user?.role === 'admin'
+
+export const RecordMedia: CollectionConfig = {
+  slug: 'record-media',
   upload: {
     mimeTypes: [
       'image/*',
@@ -10,26 +13,18 @@ export const Media: CollectionConfig = {
       'application/vnd.openxmlformats-officedocument.*',
     ],
   },
-  // access: {
-  //   read: ({ req }) => req.user?.role === 'admin',
-  //   create: ({ req }) => !!req.user,
-  //   update: ({ req }) => req.user?.role === 'admin',
-  //   delete: ({ req }) => req.user?.role === 'admin',
-  // },
+  access: {
+    read: isStaffOrAdmin,
+    create: isStaffOrAdmin,
+    update: ({ req }) => req.user?.role === 'admin',
+    delete: ({ req }) => req.user?.role === 'admin',
+  },
   fields: [
     { name: 'alt', type: 'text' },
     {
       name: 'category',
       type: 'select',
       options: ['receipt', 'invoice', 'booking', 'contract', 'photo'],
-    },
-    {
-      name: 'prefix',
-      type: 'text',
-      admin: {
-        hidden: true,
-        readOnly: true,
-      },
     },
     { name: 'uploadedBy', type: 'relationship', relationTo: 'users' },
   ],
