@@ -24,6 +24,15 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    meta: {
+      titleSuffix: '— Admin',
+    },
+    components: {
+      graphics: {
+        Logo: '@/components/Logo#Logo',
+        Icon: '@/components/Icon#Icon',
+      },
+    },
   },
 
   collections: [Users, Media, Sales, Destinations, RecordMedia, Purchases, Services, Clients],
