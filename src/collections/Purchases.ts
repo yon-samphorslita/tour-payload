@@ -62,7 +62,38 @@ export const Purchases: CollectionConfig = {
           type: "number",
           required: true,
         },
+        {
+          name: "amount",
+          type: "number",
+          admin: {
+            readOnly: true,
+            description: "Auto-computed: quantity × unitPrice",
+          },
+        },
       ],
+    },
+    {
+      name: "exchangeRate",
+      type: "number",
+      label: "Exchange rate (KHR per USD)",
+    },
+    {
+      name: "grandTotalUSD",
+      type: "number",
+      label: "Grand total (USD)",
+      admin: {
+        readOnly: true,
+        description: "Auto-computed and snapshotted on save",
+      },
+    },
+    {
+      name: "grandTotalKHR",
+      type: "number",
+      label: "Grand total (KHR)",
+      admin: {
+        readOnly: true,
+        description: "Auto-computed and snapshotted on save",
+      },
     },
     {
       name: "notes",
@@ -135,6 +166,19 @@ export const Purchases: CollectionConfig = {
       ({ req, data, operation }) => {
         if (operation === "create" && req.user) {
           data.createdBy = req.user.id;
+        }
+        return data;
+      },
+      ({ data }) => {
+        if (Array.isArray(data?.lineItems)) {
+          let total = 0;
+          data.lineItems = data.lineItems.map((item: any) => {
+            const amount = (item.quantity ?? 0) * (item.unitPrice ?? 0);
+            total += amount;
+            return { ...item, amount };
+          });
+          data.grandTotalUSD = total;
+          data.grandTotalKHR = total * (data.exchangeRate ?? 0);
         }
         return data;
       },

@@ -301,8 +301,21 @@ export interface Purchase {
     description: string;
     quantity: number;
     unitPrice: number;
+    /**
+     * Auto-computed: quantity × unitPrice
+     */
+    amount?: number | null;
     id?: string | null;
   }[];
+  exchangeRate?: number | null;
+  /**
+   * Auto-computed and snapshotted on save
+   */
+  grandTotalUSD?: number | null;
+  /**
+   * Auto-computed and snapshotted on save
+   */
+  grandTotalKHR?: number | null;
   notes?: string | null;
   /**
    * Supplier invoices, receipts, or product photos for this purchase
@@ -610,8 +623,12 @@ export interface PurchasesSelect<T extends boolean = true> {
         description?: T;
         quantity?: T;
         unitPrice?: T;
+        amount?: T;
         id?: T;
       };
+  exchangeRate?: T;
+  grandTotalUSD?: T;
+  grandTotalKHR?: T;
   notes?: T;
   images?: T;
   createdBy?: T;
