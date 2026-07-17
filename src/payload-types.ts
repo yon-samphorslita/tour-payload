@@ -277,6 +277,7 @@ export interface Sale {
  */
 export interface Client {
   id: string;
+  type: 'client' | 'supplier';
   companyName: string;
   companyNameKH?: string | null;
   vatNumber?: string | null;
@@ -293,7 +294,7 @@ export interface Client {
  */
 export interface Purchase {
   id: string;
-  supplierName: string;
+  supplier: string | Client;
   receiptCode: string;
   status: 'draft' | 'confirmed' | 'paid';
   lineItems: {
@@ -600,7 +601,7 @@ export interface RecordMediaSelect<T extends boolean = true> {
  * via the `definition` "purchases_select".
  */
 export interface PurchasesSelect<T extends boolean = true> {
-  supplierName?: T;
+  supplier?: T;
   receiptCode?: T;
   status?: T;
   lineItems?:
@@ -633,6 +634,7 @@ export interface ServicesSelect<T extends boolean = true> {
  * via the `definition` "clients_select".
  */
 export interface ClientsSelect<T extends boolean = true> {
+  type?: T;
   companyName?: T;
   companyNameKH?: T;
   vatNumber?: T;

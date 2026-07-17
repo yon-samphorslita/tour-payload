@@ -4,7 +4,7 @@ export const Purchases: CollectionConfig = {
   slug: "purchases",
   admin: {
     group: "Operations",
-    useAsTitle: "supplierName",
+    useAsTitle: "receiptCode",
   },
   access: {
     read: ({ req }) => Boolean(req.user),
@@ -14,9 +14,13 @@ export const Purchases: CollectionConfig = {
   },
   fields: [
     {
-      name: "supplierName",
-      type: "text",
+      name: "supplier",
+      type: "relationship",
+      relationTo: "clients",
       required: true,
+      filterOptions: {
+        type: { equals: "supplier" },
+      },
     },
     {
       name: "receiptCode",

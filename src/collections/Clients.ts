@@ -14,6 +14,16 @@ export const Clients: CollectionConfig = {
   },
   fields: [
     {
+      name: "type",
+      type: "select",
+      required: true,
+      defaultValue: "client",
+      options: [
+        { label: "Client", value: "client" },
+        { label: "Supplier", value: "supplier" },
+      ],
+    },
+    {
       name: "companyName",
       type: "text",
       required: true,
