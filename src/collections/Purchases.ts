@@ -30,15 +30,10 @@ export const Purchases: CollectionConfig = {
       unique: true,
     },
     {
-      name: "status",
-      type: "select",
-      required: true,
-      defaultValue: "draft",
-      options: [
-        { label: "Draft", value: "draft" },
-        { label: "Confirmed", value: "confirmed" },
-        { label: "Paid", value: "paid" },
-      ],
+      name: "invoiceDate",
+      type: "date",
+      label: "Invoice date",
+      defaultValue: () => new Date().toISOString(),
     },
     {
       name: "lineItems",

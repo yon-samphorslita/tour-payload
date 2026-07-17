@@ -296,6 +296,7 @@ export interface Purchase {
   id: string;
   supplier: string | Client;
   receiptCode: string;
+  invoiceDate?: string | null;
   status: 'draft' | 'confirmed' | 'paid';
   lineItems: {
     description: string;
@@ -616,6 +617,7 @@ export interface RecordMediaSelect<T extends boolean = true> {
 export interface PurchasesSelect<T extends boolean = true> {
   supplier?: T;
   receiptCode?: T;
+  invoiceDate?: T;
   status?: T;
   lineItems?:
     | T

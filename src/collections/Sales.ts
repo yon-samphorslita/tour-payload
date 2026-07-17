@@ -51,17 +51,6 @@ export const Sales: CollectionConfig = {
       defaultValue: () => new Date().toISOString(),
     },
     {
-      name: 'status',
-      type: 'select',
-      required: true,
-      defaultValue: 'draft',
-      options: [
-        { label: 'Draft', value: 'draft' },
-        { label: 'Confirmed', value: 'confirmed' },
-        { label: 'Paid', value: 'paid' },
-      ],
-    },
-    {
       name: 'client',
       type: 'relationship',
       relationTo: 'clients',
@@ -238,12 +227,21 @@ export const Sales: CollectionConfig = {
   hooks: {
     beforeValidate: [
       async ({ data, originalDoc, req }) => {
-        const customerName =
-          typeof data?.customerName === 'string'
+        // If this update explicitly includes customerName (even as null,
+        // which is how the field gets cleared), trust it — don't fall back
+        // to the old saved value. Only fall back when the update doesn't
+        // touch this field at all.
+        const customerNameProvided = Object.prototype.hasOwnProperty.call(
+          data ?? {},
+          'customerName'
+        )
+        const customerName = customerNameProvided
+          ? typeof data?.customerName === 'string'
             ? data.customerName.trim()
-            : typeof originalDoc?.customerName === 'string'
-              ? originalDoc.customerName.trim()
-              : ''
+            : ''
+          : typeof originalDoc?.customerName === 'string'
+            ? originalDoc.customerName.trim()
+            : ''
 
         const client = Object.prototype.hasOwnProperty.call(data ?? {}, 'client')
           ? data?.client
@@ -267,7 +265,7 @@ export const Sales: CollectionConfig = {
 
         return {
           ...data,
-          customerName: customerName || undefined,
+          customerName: customerName || null,
         }
       },
     ],
