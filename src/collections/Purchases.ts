@@ -101,7 +101,7 @@ export const Purchases: CollectionConfig = {
             overrideAccess: true,
             pagination: false,
             where: {
-              receiptCode: {
+              invoiceNo: {
                 equals: receiptCode,
               },
             },
@@ -112,7 +112,7 @@ export const Purchases: CollectionConfig = {
               collection: "purchases",
               errors: [
                 {
-                  message: "Receipt code already exists on a sale.",
+                  message: "Receipt code already exists as a sale invoice number.",
                   path: "receiptCode",
                 },
               ],

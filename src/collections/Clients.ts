@@ -19,9 +19,31 @@ export const Clients: CollectionConfig = {
       required: true,
     },
     {
+      name: "companyNameKH",
+      type: "text",
+      label: "Company name (Khmer)",
+    },
+    {
       name: "vatNumber",
       type: "text",
       label: "VAT number",
+    },
+    {
+      name: "address",
+      type: "textarea",
+    },
+    {
+      name: "addressKH",
+      type: "textarea",
+      label: "Address (Khmer)",
+    },
+    {
+      name: "phone",
+      type: "text",
+    },
+    {
+      name: "email",
+      type: "text",
     },
   ],
 };

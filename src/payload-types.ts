@@ -188,13 +188,77 @@ export interface Sale {
    * Optional when a client is linked
    */
   customerName?: string | null;
-  receiptCode: string;
+  /**
+   * Customer-facing invoice number printed on the PDF (e.g. "M000053")
+   */
+  invoiceNo: string;
+  invoiceDate?: string | null;
   status: 'draft' | 'confirmed' | 'paid';
-  notes?: string | null;
   /**
    * Optional — link this sale to a company client
    */
   client?: (string | null) | Client;
+  /**
+   * Overrides client.address on the invoice; required for one-off customers with no client linked
+   */
+  customerAddressOverride?: string | null;
+  /**
+   * Overrides client.phone on the invoice
+   */
+  customerPhoneOverride?: string | null;
+  /**
+   * Overrides client.email on the invoice
+   */
+  customerEmailOverride?: string | null;
+  /**
+   * Overrides client.vatNumber on the invoice
+   */
+  customerVatTinOverride?: string | null;
+  /**
+   * Renders as "1. NAME  2. NAME..." on the invoice
+   */
+  serviceNames?:
+    | {
+        name: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * e.g. "Extension Visa KH 1 Year"
+   */
+  serviceDescription?: string | null;
+  /**
+   * Optional line printed under the service description
+   */
+  serviceSubAddress?: string | null;
+  lineItems: {
+    /**
+     * e.g. "Extension Visa KH 1 Year"
+     */
+    description?: string | null;
+    quantity: number;
+    unitPrice: number;
+    /**
+     * Auto-computed: quantity × unitPrice
+     */
+    amount?: number | null;
+    id?: string | null;
+  }[];
+  taxNote?: string | null;
+  exchangeRate?: number | null;
+  /**
+   * Auto-computed and snapshotted on save
+   */
+  grandTotalUSD?: number | null;
+  /**
+   * Auto-computed and snapshotted on save
+   */
+  grandTotalKHR?: number | null;
+  /**
+   * Staff name shown on the invoice footer
+   */
+  preparedBy?: string | null;
+  notes?: string | null;
   /**
    * Optional — link or create the purchase order that fulfills this sale
    */
@@ -214,7 +278,12 @@ export interface Sale {
 export interface Client {
   id: string;
   companyName: string;
+  companyNameKH?: string | null;
   vatNumber?: string | null;
+  address?: string | null;
+  addressKH?: string | null;
+  phone?: string | null;
+  email?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -454,10 +523,37 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface SalesSelect<T extends boolean = true> {
   customerName?: T;
-  receiptCode?: T;
+  invoiceNo?: T;
+  invoiceDate?: T;
   status?: T;
-  notes?: T;
   client?: T;
+  customerAddressOverride?: T;
+  customerPhoneOverride?: T;
+  customerEmailOverride?: T;
+  customerVatTinOverride?: T;
+  serviceNames?:
+    | T
+    | {
+        name?: T;
+        id?: T;
+      };
+  serviceDescription?: T;
+  serviceSubAddress?: T;
+  lineItems?:
+    | T
+    | {
+        description?: T;
+        quantity?: T;
+        unitPrice?: T;
+        amount?: T;
+        id?: T;
+      };
+  taxNote?: T;
+  exchangeRate?: T;
+  grandTotalUSD?: T;
+  grandTotalKHR?: T;
+  preparedBy?: T;
+  notes?: T;
   purchase?: T;
   images?: T;
   createdBy?: T;
@@ -538,7 +634,12 @@ export interface ServicesSelect<T extends boolean = true> {
  */
 export interface ClientsSelect<T extends boolean = true> {
   companyName?: T;
+  companyNameKH?: T;
   vatNumber?: T;
+  address?: T;
+  addressKH?: T;
+  phone?: T;
+  email?: T;
   updatedAt?: T;
   createdAt?: T;
 }
