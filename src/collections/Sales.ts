@@ -1,4 +1,5 @@
 import { ValidationError, type CollectionConfig } from 'payload'
+import { upsertExchangeRateIfMissing } from './upsertExchangeRate'
 
 function hasRelationshipValue(value: unknown): boolean {
   if (typeof value === 'string' || typeof value === 'number') {
@@ -190,7 +191,8 @@ export const Sales: CollectionConfig = {
       type: 'text',
       label: 'Prepared by',
       admin: {
-        description: 'Staff name shown on the invoice footer',
+        readOnly: true,
+        description: 'Auto-filled with the name of the logged-in user who created this sale',
       },
     },
     {
@@ -273,6 +275,7 @@ export const Sales: CollectionConfig = {
       ({ req, data, operation }) => {
         if (operation === 'create' && req.user) {
           data.createdBy = req.user.id
+          data.preparedBy = req.user.name || req.user.email
         }
         return data
       },
@@ -288,6 +291,12 @@ export const Sales: CollectionConfig = {
           data.grandTotalKHR = total * (data.exchangeRate ?? 0)
         }
         return data
+      },
+    ],
+    afterChange: [
+      async ({ doc, req }) => {
+        await upsertExchangeRateIfMissing(req.payload, doc.invoiceDate, doc.exchangeRate)
+        return doc
       },
     ],
   },

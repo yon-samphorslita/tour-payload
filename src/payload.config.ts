@@ -14,6 +14,7 @@ import { Destinations } from './collections/Destinations'
 import { Services } from './collections/Services'
 import { RecordMedia } from './collections/RecordMedia'
 import { Clients } from './collections/Clients'
+import { ExchangeRates } from './collections/ExchangeRates'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -35,7 +36,17 @@ export default buildConfig({
     },
   },
 
-  collections: [Users, Media, Sales, Destinations, RecordMedia, Purchases, Services, Clients],
+  collections: [
+    Users,
+    Media,
+    Sales,
+    Destinations,
+    RecordMedia,
+    Purchases,
+    Services,
+    Clients,
+    ExchangeRates,
+  ],
 
   editor: lexicalEditor(),
 

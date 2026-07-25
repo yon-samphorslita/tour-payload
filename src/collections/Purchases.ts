@@ -1,4 +1,5 @@
 import { ValidationError, type CollectionConfig } from "payload";
+import { upsertExchangeRateIfMissing } from "./upsertExchangeRate";
 
 export const Purchases: CollectionConfig = {
   slug: "purchases",
@@ -176,6 +177,12 @@ export const Purchases: CollectionConfig = {
           data.grandTotalKHR = total * (data.exchangeRate ?? 0);
         }
         return data;
+      },
+    ],
+    afterChange: [
+      async ({ doc, req }) => {
+        await upsertExchangeRateIfMissing(req.payload, doc.invoiceDate, doc.exchangeRate);
+        return doc;
       },
     ],
   },

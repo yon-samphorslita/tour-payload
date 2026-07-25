@@ -75,6 +75,7 @@ export interface Config {
     purchases: Purchase;
     services: Service;
     clients: Client;
+    'exchange-rates': ExchangeRate;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -90,6 +91,7 @@ export interface Config {
     purchases: PurchasesSelect<false> | PurchasesSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
     clients: ClientsSelect<false> | ClientsSelect<true>;
+    'exchange-rates': ExchangeRatesSelect<false> | ExchangeRatesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -193,7 +195,6 @@ export interface Sale {
    */
   invoiceNo: string;
   invoiceDate?: string | null;
-  status: 'draft' | 'confirmed' | 'paid';
   /**
    * Optional — link this sale to a company client
    */
@@ -255,7 +256,7 @@ export interface Sale {
    */
   grandTotalKHR?: number | null;
   /**
-   * Staff name shown on the invoice footer
+   * Auto-filled with the name of the logged-in user who created this sale
    */
   preparedBy?: string | null;
   notes?: string | null;
@@ -297,7 +298,6 @@ export interface Purchase {
   supplier: string | Client;
   receiptCode: string;
   invoiceDate?: string | null;
-  status: 'draft' | 'confirmed' | 'paid';
   lineItems: {
     description: string;
     quantity: number;
@@ -390,6 +390,22 @@ export interface Service {
   createdAt: string;
 }
 /**
+ * Auto-filled from the first sale or purchase entered for each date. Sales and purchases reuse whatever rate is stored here so staff don't have to retype it.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "exchange-rates".
+ */
+export interface ExchangeRate {
+  id: string;
+  /**
+   * Stored as "YYYY-MM-DD"
+   */
+  date: string;
+  rate: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -444,6 +460,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'clients';
         value: string | Client;
+      } | null)
+    | ({
+        relationTo: 'exchange-rates';
+        value: string | ExchangeRate;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -540,7 +560,6 @@ export interface SalesSelect<T extends boolean = true> {
   customerName?: T;
   invoiceNo?: T;
   invoiceDate?: T;
-  status?: T;
   client?: T;
   customerAddressOverride?: T;
   customerPhoneOverride?: T;
@@ -618,7 +637,6 @@ export interface PurchasesSelect<T extends boolean = true> {
   supplier?: T;
   receiptCode?: T;
   invoiceDate?: T;
-  status?: T;
   lineItems?:
     | T
     | {
@@ -661,6 +679,16 @@ export interface ClientsSelect<T extends boolean = true> {
   addressKH?: T;
   phone?: T;
   email?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "exchange-rates_select".
+ */
+export interface ExchangeRatesSelect<T extends boolean = true> {
+  date?: T;
+  rate?: T;
   updatedAt?: T;
   createdAt?: T;
 }
