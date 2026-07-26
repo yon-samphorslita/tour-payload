@@ -15,6 +15,7 @@ import { Services } from './collections/Services'
 import { RecordMedia } from './collections/RecordMedia'
 import { Clients } from './collections/Clients'
 import { ExchangeRates } from './collections/ExchangeRates'
+import { CompanyInfo } from './globals/CompanyInfo'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -47,6 +48,8 @@ export default buildConfig({
     Clients,
     ExchangeRates,
   ],
+
+  globals: [CompanyInfo],
 
   // Lightweight endpoint for keep-alive pings (no auth, no DB query)
   // so Render's free tier doesn't spin the service down between logins.

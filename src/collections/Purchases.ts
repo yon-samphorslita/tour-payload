@@ -11,7 +11,12 @@ export const Purchases: CollectionConfig = {
     read: ({ req }) => Boolean(req.user),
     create: ({ req }) => Boolean(req.user),
     update: ({ req }) => Boolean(req.user),
-    delete: ({ req }) => Boolean(req.user),
+    delete: ({ req }) => {
+      if (!req.user) return false
+      if (req.user.role === 'admin') return true
+      // Staff can only delete purchases they created themselves.
+      return { createdBy: { equals: req.user.id } }
+    },
   },
   fields: [
     {
@@ -26,7 +31,7 @@ export const Purchases: CollectionConfig = {
     {
       name: "receiptCode",
       type: "text",
-      label: "Receipt code",
+      label: "Invoice No.",
       required: true,
       unique: true,
     },
@@ -143,7 +148,7 @@ export const Purchases: CollectionConfig = {
               collection: "purchases",
               errors: [
                 {
-                  message: "Receipt code already exists as a sale invoice number.",
+                  message: "Invoice No already exists as a sale invoice number.",
                   path: "receiptCode",
                 },
               ],

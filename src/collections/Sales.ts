@@ -24,7 +24,12 @@ export const Sales: CollectionConfig = {
     read: ({ req }) => Boolean(req.user),
     create: ({ req }) => Boolean(req.user),
     update: ({ req }) => Boolean(req.user),
-    delete: ({ req }) => Boolean(req.user),
+    delete: ({ req }) => {
+      if (!req.user) return false
+      if (req.user.role === 'admin') return true
+      // Staff can only delete sales they created themselves.
+      return { createdBy: { equals: req.user.id } }
+    },
   },
   fields: [
     {

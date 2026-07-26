@@ -18,6 +18,13 @@ export const Users: CollectionConfig = {
         { label: 'Staff', value: 'staff' },
       ],
     },
-    { name: 'name', type: 'text' },
+    {
+      name: 'name',
+      type: 'text',
+      required: true,
+      admin: {
+        description: 'Printed as "Prepared by" on invoice PDFs instead of the email address',
+      },
+    },
   ],
 }
