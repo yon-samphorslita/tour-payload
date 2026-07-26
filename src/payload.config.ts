@@ -48,6 +48,18 @@ export default buildConfig({
     ExchangeRates,
   ],
 
+  // Lightweight endpoint for keep-alive pings (no auth, no DB query)
+  // so Render's free tier doesn't spin the service down between logins.
+  endpoints: [
+    {
+      path: '/health',
+      method: 'get',
+      handler: async () => {
+        return Response.json({ status: 'ok' })
+      },
+    },
+  ],
+
   editor: lexicalEditor(),
 
   secret: process.env.PAYLOAD_SECRET || '',

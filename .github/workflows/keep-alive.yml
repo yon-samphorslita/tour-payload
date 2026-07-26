@@ -1,0 +1,16 @@
+name: Keep backend awake
+
+# Runs every 10 minutes so Render's free tier never spins the service
+# down (spin-down is what makes login slow — the first request after
+# idle has to "cold start" the whole app, which can take 20-60 seconds).
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping health endpoint
+        run: curl --fail --silent --show-error "${{ secrets.PAYLOAD_API_URL }}/health"
