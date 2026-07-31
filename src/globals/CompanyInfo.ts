@@ -63,6 +63,27 @@ export const CompanyInfo: GlobalConfig = {
       defaultValue: 'MBBEKHPP',
     },
     {
+      name: 'bank2Name',
+      type: 'text',
+      label: 'Second bank name',
+      defaultValue: 'FTB Bank',
+    },
+    {
+      name: 'bank2AccountName',
+      type: 'text',
+      label: 'Second bank account name',
+    },
+    {
+      name: 'bank2AccountNumber',
+      type: 'text',
+      label: 'Second bank account number',
+    },
+    {
+      name: 'bank2SwiftCode',
+      type: 'text',
+      label: 'Second bank SWIFT code',
+    },
+    {
       name: 'footerCompanyName',
       type: 'text',
       label: 'Footer company name',

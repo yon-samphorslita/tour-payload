@@ -55,6 +55,17 @@ export const Sales: CollectionConfig = {
       type: 'date',
       label: 'Invoice date',
       defaultValue: () => new Date().toISOString(),
+      // Exports filter and sort by this field, so an index keeps those
+      // queries fast as the sales collection grows.
+      index: true,
+    },
+    {
+      name: 'lead',
+      type: 'text',
+      label: 'Lead',
+      admin: {
+        description: 'Optional — who referred or sourced this sale',
+      },
     },
     {
       name: 'client',
@@ -299,8 +310,17 @@ export const Sales: CollectionConfig = {
       },
     ],
     afterChange: [
-      async ({ doc, req }) => {
-        await upsertExchangeRateIfMissing(req.payload, doc.invoiceDate, doc.exchangeRate)
+      async ({ doc, previousDoc, operation, req }) => {
+        // Skip the extra database lookup when neither field changed —
+        // this hook used to run on every save, even ones that had nothing
+        // to do with the exchange rate.
+        const invoiceDateChanged = doc.invoiceDate !== previousDoc?.invoiceDate
+        const exchangeRateChanged = doc.exchangeRate !== previousDoc?.exchangeRate
+
+        if (operation === 'create' || invoiceDateChanged || exchangeRateChanged) {
+          await upsertExchangeRateIfMissing(req.payload, doc.invoiceDate, doc.exchangeRate)
+        }
+
         return doc
       },
     ],

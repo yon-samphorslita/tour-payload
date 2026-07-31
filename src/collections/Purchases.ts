@@ -40,6 +40,9 @@ export const Purchases: CollectionConfig = {
       type: "date",
       label: "Invoice date",
       defaultValue: () => new Date().toISOString(),
+      // Exports filter and sort by this field, so an index keeps those
+      // queries fast as the purchases collection grows.
+      index: true,
     },
     {
       name: "lineItems",
@@ -129,7 +132,12 @@ export const Purchases: CollectionConfig = {
               ? originalDoc.receiptCode.trim()
               : "";
 
-        if (receiptCode) {
+        // Only re-check for a clashing sale invoice number when receiptCode is
+        // actually being changed. Without this, every save (even ones that
+        // only edit lineItems or notes) re-ran this extra database query.
+        const receiptCodeChanged = receiptCode !== (originalDoc?.receiptCode ?? "");
+
+        if (receiptCode && receiptCodeChanged) {
           const existingSale = await req.payload.find({
             collection: "sales",
             depth: 0,
@@ -185,8 +193,17 @@ export const Purchases: CollectionConfig = {
       },
     ],
     afterChange: [
-      async ({ doc, req }) => {
-        await upsertExchangeRateIfMissing(req.payload, doc.invoiceDate, doc.exchangeRate);
+      async ({ doc, previousDoc, operation, req }) => {
+        // Skip the extra database lookup when neither field changed —
+        // this hook used to run on every save, even ones that had nothing
+        // to do with the exchange rate.
+        const invoiceDateChanged = doc.invoiceDate !== previousDoc?.invoiceDate;
+        const exchangeRateChanged = doc.exchangeRate !== previousDoc?.exchangeRate;
+
+        if (operation === "create" || invoiceDateChanged || exchangeRateChanged) {
+          await upsertExchangeRateIfMissing(req.payload, doc.invoiceDate, doc.exchangeRate);
+        }
+
         return doc;
       },
     ],
