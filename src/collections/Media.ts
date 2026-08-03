@@ -10,12 +10,12 @@ export const Media: CollectionConfig = {
       'application/vnd.openxmlformats-officedocument.*',
     ],
   },
-  // access: {
-  //   read: ({ req }) => req.user?.role === 'admin',
-  //   create: ({ req }) => !!req.user,
-  //   update: ({ req }) => req.user?.role === 'admin',
-  //   delete: ({ req }) => req.user?.role === 'admin',
-  // },
+  access: {
+    read: () => true,
+    create: ({ req }) => !!req.user,
+    update: ({ req }) => !!req.user,
+    delete: ({ req }) => !!req.user,
+  },
   fields: [
     { name: 'alt', type: 'text' },
     {
