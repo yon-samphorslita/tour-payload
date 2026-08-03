@@ -101,8 +101,12 @@ export interface Config {
     defaultIDType: string;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'company-info': CompanyInfo;
+  };
+  globalsSelect: {
+    'company-info': CompanyInfoSelect<false> | CompanyInfoSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -138,7 +142,10 @@ export interface UserAuthOperations {
 export interface User {
   id: string;
   role: 'admin' | 'staff';
-  name?: string | null;
+  /**
+   * Printed as "Prepared by" on invoice PDFs instead of the email address
+   */
+  name: string;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -195,6 +202,10 @@ export interface Sale {
    */
   invoiceNo: string;
   invoiceDate?: string | null;
+  /**
+   * Optional — who referred or sourced this sale
+   */
+  lead?: string | null;
   /**
    * Optional — link this sale to a company client
    */
@@ -261,7 +272,11 @@ export interface Sale {
   preparedBy?: string | null;
   notes?: string | null;
   /**
-   * Optional — link or create the purchase order that fulfills this sale
+   * Optional — link or create the purchase order(s) that fulfill this sale
+   */
+  purchases?: (string | Purchase)[] | null;
+  /**
+   * Legacy single-purchase link — use "purchases" instead.
    */
   purchase?: (string | null) | Purchase;
   /**
@@ -560,6 +575,7 @@ export interface SalesSelect<T extends boolean = true> {
   customerName?: T;
   invoiceNo?: T;
   invoiceDate?: T;
+  lead?: T;
   client?: T;
   customerAddressOverride?: T;
   customerPhoneOverride?: T;
@@ -588,6 +604,7 @@ export interface SalesSelect<T extends boolean = true> {
   grandTotalKHR?: T;
   preparedBy?: T;
   notes?: T;
+  purchases?: T;
   purchase?: T;
   images?: T;
   createdBy?: T;
@@ -731,6 +748,54 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "company-info".
+ */
+export interface CompanyInfo {
+  id: string;
+  vatTin?: string | null;
+  addressKH?: string | null;
+  addressEN?: string | null;
+  phone?: string | null;
+  bankName?: string | null;
+  bankAccountName?: string | null;
+  bankAccountNumber?: string | null;
+  bankSwiftCode?: string | null;
+  bank2Name?: string | null;
+  bank2AccountName?: string | null;
+  bank2AccountNumber?: string | null;
+  bank2SwiftCode?: string | null;
+  footerCompanyName?: string | null;
+  footerMobile?: string | null;
+  footerTelegram?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "company-info_select".
+ */
+export interface CompanyInfoSelect<T extends boolean = true> {
+  vatTin?: T;
+  addressKH?: T;
+  addressEN?: T;
+  phone?: T;
+  bankName?: T;
+  bankAccountName?: T;
+  bankAccountNumber?: T;
+  bankSwiftCode?: T;
+  bank2Name?: T;
+  bank2AccountName?: T;
+  bank2AccountNumber?: T;
+  bank2SwiftCode?: T;
+  footerCompanyName?: T;
+  footerMobile?: T;
+  footerTelegram?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

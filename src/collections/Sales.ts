@@ -216,11 +216,23 @@ export const Sales: CollectionConfig = {
       type: 'textarea',
     },
     {
+      name: 'purchases',
+      type: 'relationship',
+      relationTo: 'purchases',
+      hasMany: true,
+      admin: {
+        description: 'Optional — link or create the purchase order(s) that fulfill this sale',
+      },
+    },
+    {
+      // Superseded by "purchases" (hasMany) above. Kept so older sales that
+      // only ever set this single-purchase field don't lose their link.
       name: 'purchase',
       type: 'relationship',
       relationTo: 'purchases',
       admin: {
-        description: 'Optional — link or create the purchase order that fulfills this sale',
+        hidden: true,
+        description: 'Legacy single-purchase link — use "purchases" instead.',
       },
     },
     {
