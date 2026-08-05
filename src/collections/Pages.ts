@@ -1,18 +1,44 @@
 // Pages.ts
 import type { CollectionConfig } from 'payload'
+import {
+  Hero,
+  RichTextBlock,
+  ImageText,
+  ServicesGrid,
+  DestinationsGrid,
+  Gallery,
+  CTA,
+  ContactInfo,
+} from './blocks'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
-  admin: { useAsTitle: 'title' },
+  admin: {
+    useAsTitle: 'title',
+    group: 'Website content',
+  },
+  versions: {
+    drafts: true,
+  },
   access: {
-    read: () => true,
-    create: ({ req }) => req.user?.role === 'admin',
-    update: ({ req }) => req.user?.role === 'admin',
+    // Published docs are public; drafts are only readable by logged-in staff.
+    // `req.query.draft=true` (Payload's own preview convention) is how the
+    // staff editing UI asks for the draft version.
+    read: ({ req }) => {
+      if (req.user) return true
+      return { _status: { equals: 'published' } }
+    },
+    create: ({ req }) => Boolean(req.user),
+    update: ({ req }) => Boolean(req.user),
     delete: ({ req }) => req.user?.role === 'admin',
   },
   fields: [
-    { name: 'title', type: 'text', required: true },
+    { name: 'title', type: 'text', required: true, localized: true },
     { name: 'slug', type: 'text', required: true, unique: true },
-    { name: 'content', type: 'richText' },
+    {
+      name: 'layout',
+      type: 'blocks',
+      blocks: [Hero, RichTextBlock, ImageText, ServicesGrid, DestinationsGrid, Gallery, CTA, ContactInfo],
+    },
   ],
 }

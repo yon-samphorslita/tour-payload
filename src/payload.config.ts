@@ -8,6 +8,7 @@ import { s3Storage } from '@payloadcms/storage-s3'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { WebsiteMedia } from './collections/WebsiteMedia'
 import { Sales } from './collections/Sales'
 import { Purchases } from './collections/Purchases'
 import { Destinations } from './collections/Destinations'
@@ -16,6 +17,8 @@ import { RecordMedia } from './collections/RecordMedia'
 import { Clients } from './collections/Clients'
 import { ExchangeRates } from './collections/ExchangeRates'
 import { CompanyInfo } from './globals/CompanyInfo'
+import { Pages } from './collections/Pages'
+import { SiteSettings } from './globals/SiteSettings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -40,6 +43,7 @@ export default buildConfig({
   collections: [
     Users,
     Media,
+    WebsiteMedia,
     Sales,
     Destinations,
     RecordMedia,
@@ -47,9 +51,15 @@ export default buildConfig({
     Services,
     Clients,
     ExchangeRates,
+    Pages,
   ],
 
-  globals: [CompanyInfo],
+  globals: [CompanyInfo, SiteSettings],
+
+  localization: {
+    locales: ['en', 'km'],
+    defaultLocale: 'en',
+  },
 
   // Lightweight endpoint for keep-alive pings (no auth, no DB query)
   // so Render's free tier doesn't spin the service down between logins.
@@ -83,7 +93,23 @@ export default buildConfig({
       collections: {
         media: true,
       },
-      bucket: process.env.S3_BUCKET || '',
+      bucket: process.env.S3_ADMIN_BUCKET || '',
+      config: {
+        credentials: {
+          accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+          secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+        },
+        region: process.env.S3_REGION || 'auto',
+        endpoint: process.env.S3_ENDPOINT || '',
+        forcePathStyle: true,
+      },
+    }),
+    s3Storage({
+      alwaysInsertFields: true,
+      collections: {
+        'website-media': true,
+      },
+      bucket: process.env.S3_WEBSITE_BUCKET || '',
       config: {
         credentials: {
           accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
