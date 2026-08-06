@@ -30,7 +30,7 @@ export const Pages: CollectionConfig = {
     },
     create: ({ req }) => Boolean(req.user),
     update: ({ req }) => Boolean(req.user),
-    delete: ({ req }) => req.user?.role === 'admin',
+    delete: ({ req }) => Boolean(req.user),
   },
   fields: [
     { name: 'title', type: 'text', required: true, localized: true },

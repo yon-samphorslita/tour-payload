@@ -6,9 +6,9 @@ export const Destinations: CollectionConfig = {
   admin: { useAsTitle: 'name' },
   access: {
     read: () => true,  // public
-    create: ({ req }) => req.user?.role === 'admin',
-    update: ({ req }) => req.user?.role === 'admin',
-    delete: ({ req }) => req.user?.role === 'admin',
+    create: ({ req }) => Boolean(req.user),
+    update: ({ req }) => Boolean(req.user),
+    delete: ({ req }) => Boolean(req.user),
   },
   fields: [
     { name: 'name', type: 'text', required: true },
