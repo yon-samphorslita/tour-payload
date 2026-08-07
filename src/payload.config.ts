@@ -67,7 +67,8 @@ export default buildConfig({
     {
       path: '/health',
       method: 'get',
-      handler: async () => {
+      handler: async (req) => {
+        req.payload.logger.info('Health check ping received')
         return Response.json({ status: 'ok' })
       },
     },
