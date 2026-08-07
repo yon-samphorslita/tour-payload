@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { canWrite } from "../access/canWrite";
 
 export const Clients: CollectionConfig = {
   slug: "clients",
@@ -8,9 +9,9 @@ export const Clients: CollectionConfig = {
   },
   access: {
     read: ({ req }) => Boolean(req.user),
-    create: ({ req }) => Boolean(req.user),
-    update: ({ req }) => Boolean(req.user),
-    delete: ({ req }) => Boolean(req.user),
+    create: canWrite,
+    update: canWrite,
+    delete: canWrite,
   },
   fields: [
     {

@@ -1,5 +1,6 @@
 import { ValidationError, type CollectionConfig } from 'payload'
 import { upsertExchangeRateIfMissing } from './upsertExchangeRate'
+import { canWrite } from '../access/canWrite'
 
 function hasRelationshipValue(value: unknown): boolean {
   if (typeof value === 'string' || typeof value === 'number') {
@@ -22,10 +23,10 @@ export const Sales: CollectionConfig = {
   // Nothing here is public. Every operation requires a logged-in user.
   access: {
     read: ({ req }) => Boolean(req.user),
-    create: ({ req }) => Boolean(req.user),
-    update: ({ req }) => Boolean(req.user),
+    create: canWrite,
+    update: canWrite,
     delete: ({ req }) => {
-      if (!req.user) return false
+      if (!req.user || req.user.role === 'tax') return false
       if (req.user.role === 'admin') return true
       // Staff can only delete sales they created themselves.
       return { createdBy: { equals: req.user.id } }
