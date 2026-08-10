@@ -5,7 +5,7 @@ name: Keep backend awake
 # idle has to "cold start" the whole app, which can take 20-60 seconds).
 on:
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '*/1 * * * *'
   workflow_dispatch: {}
 
 jobs:
