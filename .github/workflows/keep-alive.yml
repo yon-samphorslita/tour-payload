@@ -5,7 +5,7 @@ name: Keep backend awake
 # idle has to "cold start" the whole app, which can take 20-60 seconds).
 on:
   schedule:
-    - cron: '*/1 * * * *'
+    - cron: '*/10 * * * *'
   workflow_dispatch: {}
 
 jobs:
@@ -13,4 +13,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Ping health endpoint
-        run: curl --fail --silent --show-error "${{ secrets.PAYLOAD_API_URL }}/health"
+        run: curl --fail --silent --show-error "${{ secrets.PAYLOAD_API_URL }}/api/health"
