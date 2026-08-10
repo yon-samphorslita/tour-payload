@@ -1,14 +1,15 @@
 // Destinations.ts
 import type { CollectionConfig } from 'payload'
+import { canWrite } from '../access/canWrite'
 
 export const Destinations: CollectionConfig = {
   slug: 'destinations',
   admin: { useAsTitle: 'name' },
   access: {
     read: () => true,  // public
-    create: ({ req }) => Boolean(req.user),
-    update: ({ req }) => Boolean(req.user),
-    delete: ({ req }) => Boolean(req.user),
+    create: canWrite,
+    update: canWrite,
+    delete: canWrite,
   },
   fields: [
     { name: 'name', type: 'text', required: true },

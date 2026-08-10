@@ -147,7 +147,7 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: string;
-  role: 'admin' | 'staff';
+  role: 'admin' | 'staff' | 'tax';
   /**
    * Printed as "Prepared by" on invoice PDFs instead of the email address
    */

@@ -1,5 +1,6 @@
 import { ValidationError, type CollectionConfig } from "payload";
 import { upsertExchangeRateIfMissing } from "./upsertExchangeRate";
+import { canWrite } from "../access/canWrite";
 
 export const Purchases: CollectionConfig = {
   slug: "purchases",
@@ -9,10 +10,10 @@ export const Purchases: CollectionConfig = {
   },
   access: {
     read: ({ req }) => Boolean(req.user),
-    create: ({ req }) => Boolean(req.user),
-    update: ({ req }) => Boolean(req.user),
+    create: canWrite,
+    update: canWrite,
     delete: ({ req }) => {
-      if (!req.user) return false
+      if (!req.user || req.user.role === 'tax') return false
       if (req.user.role === 'admin') return true
       // Staff can only delete purchases they created themselves.
       return { createdBy: { equals: req.user.id } }

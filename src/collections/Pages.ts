@@ -1,5 +1,6 @@
 // Pages.ts
 import type { CollectionConfig } from 'payload'
+import { canWrite } from '../access/canWrite'
 import {
   Hero,
   RichTextBlock,
@@ -28,9 +29,9 @@ export const Pages: CollectionConfig = {
       if (req.user) return true
       return { _status: { equals: 'published' } }
     },
-    create: ({ req }) => Boolean(req.user),
-    update: ({ req }) => Boolean(req.user),
-    delete: ({ req }) => Boolean(req.user),
+    create: canWrite,
+    update: canWrite,
+    delete: canWrite,
   },
   fields: [
     { name: 'title', type: 'text', required: true, localized: true },

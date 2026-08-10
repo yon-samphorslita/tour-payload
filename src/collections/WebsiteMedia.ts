@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { canWrite } from '../access/canWrite'
 
 // Public marketing/portfolio images — kept in a separate S3 bucket
 // (S3_WEBSITE_BUCKET) from the invoicing-related `media` collection
@@ -14,9 +15,9 @@ export const WebsiteMedia: CollectionConfig = {
   },
   access: {
     read: () => true,
-    create: ({ req }) => !!req.user,
-    update: ({ req }) => !!req.user,
-    delete: ({ req }) => !!req.user,
+    create: canWrite,
+    update: canWrite,
+    delete: canWrite,
   },
   fields: [{ name: 'alt', type: 'text' }],
 }

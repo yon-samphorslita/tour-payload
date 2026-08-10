@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { canWrite } from '../access/canWrite'
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -12,9 +13,9 @@ export const Media: CollectionConfig = {
   },
   access: {
     read: () => true,
-    create: ({ req }) => !!req.user,
-    update: ({ req }) => !!req.user,
-    delete: ({ req }) => !!req.user,
+    create: canWrite,
+    update: canWrite,
+    delete: canWrite,
   },
   fields: [
     { name: 'alt', type: 'text' },
