@@ -1,10 +1,12 @@
 import type { CollectionConfig } from "payload";
 import { canWrite } from "../access/canWrite";
+import { hideFromNonAdmins } from "../access/hideFromNonAdmins";
 
 export const ExchangeRates: CollectionConfig = {
   slug: "exchange-rates",
   admin: {
     group: "Operations",
+    hidden: hideFromNonAdmins,
     useAsTitle: "date",
     description:
       "Auto-filled from the first sale or purchase entered for each date. Sales and purchases reuse whatever rate is stored here so staff don't have to retype it.",

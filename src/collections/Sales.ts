@@ -1,6 +1,7 @@
 import { ValidationError, type CollectionConfig } from 'payload'
 import { upsertExchangeRateIfMissing } from './upsertExchangeRate'
 import { canWrite } from '../access/canWrite'
+import { hideFromNonAdmins } from '../access/hideFromNonAdmins'
 
 function hasRelationshipValue(value: unknown): boolean {
   if (typeof value === 'string' || typeof value === 'number') {
@@ -18,6 +19,7 @@ export const Sales: CollectionConfig = {
   slug: 'sales',
   admin: {
     group: 'Operations',
+    hidden: hideFromNonAdmins,
     useAsTitle: 'customerName',
   },
   // Nothing here is public. Every operation requires a logged-in user.

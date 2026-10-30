@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { hideFromNonAdmins } from '../access/hideFromNonAdmins'
 
 // MRL's own company details, printed on every invoice PDF (VAT TIN, address,
 // bank info, footer contact details). Any logged-in user can read this;
@@ -8,6 +9,7 @@ export const CompanyInfo: GlobalConfig = {
   label: 'Company Info',
   admin: {
     group: 'Settings',
+    hidden: hideFromNonAdmins,
   },
   access: {
     read: ({ req }) => Boolean(req.user),

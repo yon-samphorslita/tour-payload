@@ -1,10 +1,11 @@
 // Destinations.ts
 import type { CollectionConfig } from 'payload'
 import { canWrite } from '../access/canWrite'
+import { hideFromNonAdmins } from '../access/hideFromNonAdmins'
 
 export const Destinations: CollectionConfig = {
   slug: 'destinations',
-  admin: { useAsTitle: 'name' },
+  admin: { useAsTitle: 'name', hidden: hideFromNonAdmins },
   access: {
     read: () => true,  // public
     create: canWrite,

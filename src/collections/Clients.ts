@@ -1,10 +1,12 @@
 import type { CollectionConfig } from "payload";
 import { canWrite } from "../access/canWrite";
+import { hideFromNonAdmins } from "../access/hideFromNonAdmins";
 
 export const Clients: CollectionConfig = {
   slug: "clients",
   admin: {
     group: "Operations",
+    hidden: hideFromNonAdmins,
     useAsTitle: "companyName",
   },
   access: {

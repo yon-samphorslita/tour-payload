@@ -1,11 +1,13 @@
 import { ValidationError, type CollectionConfig } from "payload";
 import { upsertExchangeRateIfMissing } from "./upsertExchangeRate";
 import { canWrite } from "../access/canWrite";
+import { hideFromNonAdmins } from "../access/hideFromNonAdmins";
 
 export const Purchases: CollectionConfig = {
   slug: "purchases",
   admin: {
     group: "Operations",
+    hidden: hideFromNonAdmins,
     useAsTitle: "receiptCode",
   },
   access: {
