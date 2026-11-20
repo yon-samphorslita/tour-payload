@@ -6,7 +6,6 @@ import {
   RichTextBlock,
   ImageText,
   ServicesGrid,
-  DestinationsGrid,
   Gallery,
   CTA,
   ContactInfo,
@@ -39,7 +38,7 @@ export const Pages: CollectionConfig = {
     {
       name: 'layout',
       type: 'blocks',
-      blocks: [Hero, RichTextBlock, ImageText, ServicesGrid, DestinationsGrid, Gallery, CTA, ContactInfo],
+      blocks: [Hero, RichTextBlock, ImageText, ServicesGrid, Gallery, CTA, ContactInfo],
     },
   ],
 }

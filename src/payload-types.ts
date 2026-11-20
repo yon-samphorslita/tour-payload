@@ -71,10 +71,11 @@ export interface Config {
     media: Media;
     'website-media': WebsiteMedia;
     sales: Sale;
-    destinations: Destination;
     'record-media': RecordMedia;
     purchases: Purchase;
     services: Service;
+    'visa-countries': VisaCountry;
+    enquiries: Enquiry;
     clients: Client;
     'exchange-rates': ExchangeRate;
     pages: Page;
@@ -89,10 +90,11 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     'website-media': WebsiteMediaSelect<false> | WebsiteMediaSelect<true>;
     sales: SalesSelect<false> | SalesSelect<true>;
-    destinations: DestinationsSelect<false> | DestinationsSelect<true>;
     'record-media': RecordMediaSelect<false> | RecordMediaSelect<true>;
     purchases: PurchasesSelect<false> | PurchasesSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
+    'visa-countries': VisaCountriesSelect<false> | VisaCountriesSelect<true>;
+    enquiries: EnquiriesSelect<false> | EnquiriesSelect<true>;
     clients: ClientsSelect<false> | ClientsSelect<true>;
     'exchange-rates': ExchangeRatesSelect<false> | ExchangeRatesSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
@@ -159,6 +161,7 @@ export interface User {
   resetPasswordExpiration?: string | null;
   salt?: string | null;
   hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
   sessions?:
@@ -179,8 +182,9 @@ export interface Media {
   id: string;
   alt?: string | null;
   category?: ('receipt' | 'invoice' | 'booking' | 'contract' | 'photo') | null;
-  prefix?: string | null;
   uploadedBy?: (string | null) | User;
+  prefix?: string | null;
+  _objectKey?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -200,6 +204,8 @@ export interface Media {
 export interface WebsiteMedia {
   id: string;
   alt?: string | null;
+  prefix?: string | null;
+  _objectKey?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -368,36 +374,6 @@ export interface Purchase {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "destinations".
- */
-export interface Destination {
-  id: string;
-  name: string;
-  country?: string | null;
-  description?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  price?: number | null;
-  featuredImage?: (string | null) | WebsiteMedia;
-  gallery?: (string | WebsiteMedia)[] | null;
-  featured?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "record-media".
  */
 export interface RecordMedia {
@@ -424,8 +400,138 @@ export interface RecordMedia {
 export interface Service {
   id: string;
   title: string;
-  description: string;
+  /**
+   * URL part, e.g. "passport" → /en/services/passport
+   */
+  slug: string;
+  summary: string;
+  icon?: ('visa' | 'passport' | 'translation' | 'plane' | 'bus' | 'document') | null;
+  image?: (string | null) | WebsiteMedia;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  documents?:
+    | {
+        item: string;
+        note?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * e.g. "5–7 working days"
+   */
+  processingTime?: string | null;
+  /**
+   * Starting price in USD (optional)
+   */
+  priceFrom?: number | null;
+  priceNote?: string | null;
+  steps?:
+    | {
+        title: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  enquiry?: {
+    form?: ('general' | 'ticket') | null;
+    buttonLabel?: string | null;
+    messagePrefill?: string | null;
+  };
+  /**
+   * Show the "private agency, not a government office" notice (Site Settings).
+   */
+  showAgencyNotice?: boolean | null;
+  /**
+   * Show the Visa Countries list on this service page.
+   */
+  listsVisaCountries?: boolean | null;
+  relatedServices?: (string | Service)[] | null;
   order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "visa-countries".
+ */
+export interface VisaCountry {
+  id: string;
+  name: string;
+  /**
+   * URL part, e.g. "japan" → /en/visa/japan
+   */
+  slug: string;
+  summary?: string | null;
+  documents?:
+    | {
+        item: string;
+        note?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  processingTime?: string | null;
+  /**
+   * Starting price in USD (optional)
+   */
+  priceFrom?: number | null;
+  priceNote?: string | null;
+  notes?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enquiries".
+ */
+export interface Enquiry {
+  id: string;
+  status?: ('new' | 'contacted' | 'closed') | null;
+  form?: ('general' | 'ticket') | null;
+  locale?: ('en' | 'km') | null;
+  service?: (string | null) | Service;
+  visaCountry?: (string | null) | VisaCountry;
+  name: string;
+  phone: string;
+  telegram?: string | null;
+  email?: string | null;
+  message?: string | null;
+  ticket?: {
+    from?: string | null;
+    to?: string | null;
+    travelDate?: string | null;
+    returnDate?: string | null;
+    passengers?: number | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -516,14 +622,6 @@ export interface Page {
           }
         | {
             heading?: string | null;
-            intro?: string | null;
-            featuredOnly?: boolean | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'destinationsGrid';
-          }
-        | {
-            heading?: string | null;
             images: (string | WebsiteMedia)[];
             id?: string | null;
             blockName?: string | null;
@@ -591,10 +689,6 @@ export interface PayloadLockedDocument {
         value: string | Sale;
       } | null)
     | ({
-        relationTo: 'destinations';
-        value: string | Destination;
-      } | null)
-    | ({
         relationTo: 'record-media';
         value: string | RecordMedia;
       } | null)
@@ -605,6 +699,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'services';
         value: string | Service;
+      } | null)
+    | ({
+        relationTo: 'visa-countries';
+        value: string | VisaCountry;
+      } | null)
+    | ({
+        relationTo: 'enquiries';
+        value: string | Enquiry;
       } | null)
     | ({
         relationTo: 'clients';
@@ -674,6 +776,7 @@ export interface UsersSelect<T extends boolean = true> {
   resetPasswordExpiration?: T;
   salt?: T;
   hash?: T;
+  resetPasswordRequestedAt?: T;
   loginAttempts?: T;
   lockUntil?: T;
   sessions?:
@@ -691,8 +794,9 @@ export interface UsersSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   category?: T;
-  prefix?: T;
   uploadedBy?: T;
+  prefix?: T;
+  _objectKey?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -711,6 +815,8 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface WebsiteMediaSelect<T extends boolean = true> {
   alt?: T;
+  prefix?: T;
+  _objectKey?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -769,21 +875,6 @@ export interface SalesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "destinations_select".
- */
-export interface DestinationsSelect<T extends boolean = true> {
-  name?: T;
-  country?: T;
-  description?: T;
-  price?: T;
-  featuredImage?: T;
-  gallery?: T;
-  featured?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "record-media_select".
  */
 export interface RecordMediaSelect<T extends boolean = true> {
@@ -834,8 +925,91 @@ export interface PurchasesSelect<T extends boolean = true> {
  */
 export interface ServicesSelect<T extends boolean = true> {
   title?: T;
-  description?: T;
+  slug?: T;
+  summary?: T;
+  icon?: T;
+  image?: T;
+  body?: T;
+  documents?:
+    | T
+    | {
+        item?: T;
+        note?: T;
+        id?: T;
+      };
+  processingTime?: T;
+  priceFrom?: T;
+  priceNote?: T;
+  steps?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  enquiry?:
+    | T
+    | {
+        form?: T;
+        buttonLabel?: T;
+        messagePrefill?: T;
+      };
+  showAgencyNotice?: T;
+  listsVisaCountries?: T;
+  relatedServices?: T;
   order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "visa-countries_select".
+ */
+export interface VisaCountriesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  summary?: T;
+  documents?:
+    | T
+    | {
+        item?: T;
+        note?: T;
+        id?: T;
+      };
+  processingTime?: T;
+  priceFrom?: T;
+  priceNote?: T;
+  notes?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enquiries_select".
+ */
+export interface EnquiriesSelect<T extends boolean = true> {
+  status?: T;
+  form?: T;
+  locale?: T;
+  service?: T;
+  visaCountry?: T;
+  name?: T;
+  phone?: T;
+  telegram?: T;
+  email?: T;
+  message?: T;
+  ticket?:
+    | T
+    | {
+        from?: T;
+        to?: T;
+        travelDate?: T;
+        returnDate?: T;
+        passengers?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -907,15 +1081,6 @@ export interface PagesSelect<T extends boolean = true> {
           | {
               heading?: T;
               intro?: T;
-              id?: T;
-              blockName?: T;
-            };
-        destinationsGrid?:
-          | T
-          | {
-              heading?: T;
-              intro?: T;
-              featuredOnly?: T;
               id?: T;
               blockName?: T;
             };
@@ -1036,7 +1201,24 @@ export interface SiteSetting {
     | null;
   contactEmail?: string | null;
   contactPhone?: string | null;
+  /**
+   * e.g. https://t.me/yourname. Shown as a contact button on every page.
+   */
+  telegramUrl?: string | null;
   address?: string | null;
+  openingHours?: string | null;
+  /**
+   * Google Maps link to the office
+   */
+  mapUrl?: string | null;
+  /**
+   * Google Maps "Embed a map" src URL, for the Contact Info block
+   */
+  mapEmbedUrl?: string | null;
+  /**
+   * Shown on services with "Show agency notice" ticked.
+   */
+  agencyNotice?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1086,7 +1268,12 @@ export interface SiteSettingsSelect<T extends boolean = true> {
       };
   contactEmail?: T;
   contactPhone?: T;
+  telegramUrl?: T;
   address?: T;
+  openingHours?: T;
+  mapUrl?: T;
+  mapEmbedUrl?: T;
+  agencyNotice?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
