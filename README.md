@@ -62,6 +62,21 @@ Alternatively, you can use [Docker](https://www.docker.com) to spin up this temp
 
 That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
 
+## Testing
+
+Tests never touch the database in `.env`. Each run starts a throwaway in-memory MongoDB (`mongodb-memory-server-core`) and deletes it afterwards. The first run downloads a MongoDB binary (~100 MB) into `~/.cache/mongodb-binaries`.
+
+| Command | What it does |
+|---|---|
+| `npm run test:int` | Vitest: access rules and hooks through Payload's Local API (`tests/int`) |
+| `npm run test:e2e` | Playwright: REST API and admin panel in Chrome (`tests/e2e`) |
+| `npm test` | both |
+| `npm run test:server` | starts Payload on port 3100 with seeded content and test users, for manual testing or the frontends' e2e tests |
+
+Test users and the test enquiry key are in `tests/helpers/testEnv.ts` (dummy values, test database only). The e2e tests use the installed Google Chrome; on a machine without it, run `npx playwright install chrome`.
+
+The test server builds into `.next-test`, so it can run next to `npm run dev`.
+
 ## Questions
 
 If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).

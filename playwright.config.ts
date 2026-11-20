@@ -1,12 +1,8 @@
 import { defineConfig, devices } from '@playwright/test'
+import { TEST_BACKEND_URL } from './tests/helpers/testEnv'
 
 /**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-import 'dotenv/config'
-
-/**
+ * E2E tests run against `npm run test:server`: Payload on a throwaway in-memory MongoDB.
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
@@ -15,27 +11,29 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+  /* Tests share one database, so run them one at a time. */
+  workers: 1,
+  reporter: [['list'], ['html', { open: 'never' }]],
+  /* The dev server compiles pages on first visit, which can be slow. */
+  timeout: 90_000,
+  expect: { timeout: 20_000 },
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    // baseURL: 'http://localhost:3000',
-
+    baseURL: TEST_BACKEND_URL,
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
   },
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'], channel: 'chromium' },
+      name: 'chrome',
+      use: { ...devices['Desktop Chrome'], channel: 'chrome' },
     },
   ],
   webServer: {
-    command: 'pnpm dev',
-    reuseExistingServer: true,
-    url: 'http://localhost:3000',
+    command: 'npm run test:server',
+    url: `${TEST_BACKEND_URL}/api/health`,
+    // Never reuse a running server: it could be connected to a real database.
+    reuseExistingServer: false,
+    timeout: 300_000,
+    gracefulShutdown: { signal: 'SIGTERM', timeout: 10_000 },
   },
 })

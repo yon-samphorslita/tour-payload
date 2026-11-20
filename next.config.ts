@@ -8,6 +8,8 @@ const dirname = path.dirname(__filename)
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  // Tests build into .next-test so they can run next to `npm run dev`.
+  distDir: process.env.NEXT_DIST_DIR || '.next',
 
   images: {
     localPatterns: [
