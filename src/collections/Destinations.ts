@@ -1,11 +1,11 @@
 // Destinations.ts
 import type { CollectionConfig } from 'payload'
 import { canWrite } from '../access/canWrite'
-import { hideFromNonAdmins } from '../access/hideFromNonAdmins'
 
 export const Destinations: CollectionConfig = {
   slug: 'destinations',
-  admin: { useAsTitle: 'name', hidden: hideFromNonAdmins },
+  // Shown on the public site, so staff edit it with the other website content.
+  admin: { useAsTitle: 'name', group: 'Website content' },
   access: {
     read: () => true,  // public
     create: canWrite,
