@@ -2,7 +2,7 @@
 // Safe to re-run: records are matched by slug and updated.
 import { getPayload, type Payload } from 'payload'
 import config from '../payload.config'
-import { navLinks, pages, services, siteSettings, visaCountries, type PageSeed } from './content'
+import { navLinks, pages, services, siteSettings, visaCountries, type BlockSeed, type PageSeed } from './content'
 
 // Refuse anything that doesn't look like a dev database.
 function assertDevDatabase() {
@@ -61,16 +61,45 @@ async function seedVisaCountries(payload: Payload) {
   for (const c of visaCountries) {
     const localized = (l: 'en' | 'km') => ({
       name: c.name[l],
-      summary: l === 'en' ? '[placeholder] Requirements change; confirm before applying.' : '[placeholder] លក្ខខណ្ឌអាចផ្លាស់ប្តូរ សូមបញ្ជាក់មុនពេលដាក់ពាក្យ។',
+      summary: c.summary[l],
       documents: c.documents[l],
-      processingTime: l === 'en' ? '[placeholder] 7–15 working days' : '[placeholder] ៧–១៥ ថ្ងៃធ្វើការ',
-      priceNote: l === 'en' ? '[placeholder] Embassy fee plus service fee.' : '[placeholder] ថ្លៃស្ថានទូត បូកថ្លៃសេវា។',
+      processingTime: c.processingTime[l],
+      priceNote: c.priceNote[l],
+      notes: c.notes[l],
     })
     await upsert(payload, 'visa-countries', c.slug, { ...localized('en'), order: c.order }, localized('km'))
   }
 }
 
-async function seedPage(payload: Payload, page: PageSeed) {
+// Finds an uploaded Website Media file by name, so the seed works on any database.
+async function findMediaIdByFilename(payload: Payload, filename: string) {
+  const result = await payload.find({ collection: 'website-media', where: { filename: { equals: filename } }, limit: 1, depth: 0 })
+  if (!result.docs[0]) {
+    payload.logger.warn(`website-media "${filename}" not found; seeding without it`)
+    return undefined
+  }
+  return result.docs[0].id
+}
+
+// Swaps image filenames for media IDs. An Image + Text block without its image becomes plain rich text.
+async function resolveBlockImages(payload: Payload, block: BlockSeed): Promise<BlockSeed> {
+  if (!block.images) return block
+  const imageFields: Record<string, string> = {}
+  for (const [fieldName, filename] of Object.entries(block.images)) {
+    const mediaId = await findMediaIdByFilename(payload, filename)
+    if (mediaId) imageFields[fieldName] = mediaId
+  }
+  if (block.blockType === 'imageText' && !imageFields.image) {
+    return { blockType: 'richText', en: block.en, km: block.km }
+  }
+  return { ...block, shared: { ...block.shared, ...imageFields } }
+}
+
+async function seedPage(payload: Payload, pageSeed: PageSeed) {
+  const resolvedLayout: BlockSeed[] = []
+  for (const block of pageSeed.layout) resolvedLayout.push(await resolveBlockImages(payload, block))
+  const page = { ...pageSeed, layout: resolvedLayout }
+
   const en = { title: page.title.en, layout: page.layout.map((b) => ({ blockType: b.blockType, ...b.shared, ...b.en })) }
   const existing = await payload.find({ collection: 'pages', where: { slug: { equals: page.slug } }, limit: 1, depth: 0, draft: true })
   const data = { ...en, slug: page.slug, _status: 'published' } as never
