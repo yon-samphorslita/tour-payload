@@ -19,6 +19,8 @@ export const WebsiteMedia: CollectionConfig = {
   },
   upload: {
     mimeTypes: ['image/*'],
+    // Hides "Paste URL": the browser fetch fails for most sites (CORS), so staff upload files instead.
+    pasteURL: false,
   },
   access: {
     read: () => true,

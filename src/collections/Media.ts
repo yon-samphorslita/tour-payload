@@ -12,6 +12,8 @@ export const Media: CollectionConfig = {
       'application/msword',
       'application/vnd.openxmlformats-officedocument.*',
     ],
+    // Receipts and invoices come from local files only, so "Paste URL" is hidden.
+    pasteURL: false,
   },
   access: {
     read: () => true,
