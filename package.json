@@ -18,17 +18,17 @@
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
   },
   "dependencies": {
-    "@payloadcms/db-mongodb": "^3.85.1",
-    "@payloadcms/next": "3.85.1",
-    "@payloadcms/richtext-lexical": "3.85.1",
-    "@payloadcms/storage-s3": "^3.85.1",
-    "@payloadcms/ui": "3.85.1",
+    "@payloadcms/db-mongodb": "3.91.0",
+    "@payloadcms/next": "3.91.0",
+    "@payloadcms/richtext-lexical": "3.91.0",
+    "@payloadcms/storage-s3": "3.91.0",
+    "@payloadcms/ui": "3.91.0",
     "cross-env": "^7.0.3",
     "dotenv": "16.4.7",
     "graphql": "^16.8.1",
     "mongodb": "^7.3.0",
-    "next": "^16.2.9",
-    "payload": "3.85.1",
+    "next": "16.4.6",
+    "payload": "3.91.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "sharp": "0.34.2"
@@ -41,7 +41,7 @@
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "4.5.2",
     "eslint": "^9.16.0",
-    "eslint-config-next": "16.2.6",
+    "eslint-config-next": "16.4.6",
     "jsdom": "28.0.0",
     "prettier": "^3.4.2",
     "tsx": "^4.22.4",
@@ -59,5 +59,8 @@
       "esbuild",
       "unrs-resolver"
     ]
+  },
+  "overrides": {
+    "mongoose": "8.24.7"
   }
 }
