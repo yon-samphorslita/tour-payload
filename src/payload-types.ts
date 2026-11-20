@@ -390,8 +390,8 @@ export interface Destination {
     [k: string]: unknown;
   } | null;
   price?: number | null;
-  featuredImage?: (string | null) | Media;
-  gallery?: (string | Media)[] | null;
+  featuredImage?: (string | null) | WebsiteMedia;
+  gallery?: (string | WebsiteMedia)[] | null;
   featured?: boolean | null;
   updatedAt: string;
   createdAt: string;

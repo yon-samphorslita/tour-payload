@@ -17,8 +17,8 @@ export const Destinations: CollectionConfig = {
     { name: 'country', type: 'text' },
     { name: 'description', type: 'richText' },
     { name: 'price', type: 'number' },
-    { name: 'featuredImage', type: 'relationship', relationTo: 'media' },
-    { name: 'gallery', type: 'relationship', relationTo: 'media', hasMany: true },
+    { name: 'featuredImage', type: 'relationship', relationTo: 'website-media' },
+    { name: 'gallery', type: 'relationship', relationTo: 'website-media', hasMany: true },
     { name: 'featured', type: 'checkbox', defaultValue: false },
   ],
 }
