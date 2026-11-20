@@ -744,7 +744,8 @@ export const siteSettings = {
   contactPhone: '+85512849933',
   telegramUrl: 'https://t.me/mrltravel',
   mapUrl: 'https://www.google.com/maps/search/?api=1&query=136+Street+136,+Phsar+Kandal+II,+Daun+Penh,+Phnom+Penh',
-  mapEmbedUrl: 'https://www.google.com/maps?q=136+Street+136,+Phsar+Kandal+II,+Daun+Penh,+Phnom+Penh&output=embed',
+  // Empty on purpose: staff paste the official link from Google Maps → Share → Embed a map.
+  mapEmbedUrl: '',
   socialLinks: [{ platform: 'facebook' as const, url: 'https://www.facebook.com/mrltravelcambodia/' }],
   address: {
     en: 'No. 136, Street 136, Sangkat Phsar Kandal II, Khan Daun Penh, Phnom Penh, Cambodia',

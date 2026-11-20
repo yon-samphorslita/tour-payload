@@ -1168,7 +1168,7 @@ export interface SiteSetting {
    */
   mapUrl?: string | null;
   /**
-   * Google Maps "Embed a map" src URL, for the Contact Info block
+   * Google Maps → Share → Embed a map, then paste only the src link (starts with https://www.google.com/maps/embed?pb=). Empty shows the address panel instead.
    */
   mapEmbedUrl?: string | null;
   /**

@@ -4,6 +4,30 @@ import type { GlobalConfig, TextFieldSingleValidation } from 'payload'
 const httpsUrl: TextFieldSingleValidation = (value) =>
   !value || /^https:\/\/[^\s]+$/.test(value) || 'Must be a full https:// link'
 
+// The public site only shows Google's official embed links; older ?output=embed links show a blank map.
+const OFFICIAL_MAP_EMBED_PREFIX = 'https://www.google.com/maps/embed?pb='
+
+const MAP_EMBED_ERROR_EN =
+  `Paste the link from Google Maps → Share → Embed a map. It starts with ${OFFICIAL_MAP_EMBED_PREFIX}. ` +
+  'If you copied the whole <iframe> code, keep only the link inside src="…". Or leave this empty.'
+const MAP_EMBED_ERROR_KM =
+  `សូមបិទភ្ជាប់តំណពី Google Maps → Share → Embed a map។ តំណត្រូវចាប់ផ្តើមដោយ ${OFFICIAL_MAP_EMBED_PREFIX} ។ ` +
+  'បើអ្នកចម្លងកូដ <iframe> ទាំងមូល សូមយកតែតំណនៅក្នុង src="…" ប៉ុណ្ណោះ។ ឬទុកវាលនេះឱ្យនៅទទេ។'
+
+const officialMapEmbedUrl: TextFieldSingleValidation = (value, { previousValue }) => {
+  if (!value) return true
+
+  // An unchanged saved value stays valid, so an old link doesn't block saving other settings.
+  if (value === previousValue) return true
+
+  const hasOfficialPrefix = value.startsWith(OFFICIAL_MAP_EMBED_PREFIX)
+  const hasSpaces = /\s/.test(value)
+  if (hasOfficialPrefix && !hasSpaces) return true
+
+  // The admin UI is English-only, so show both languages.
+  return `${MAP_EMBED_ERROR_EN}\n${MAP_EMBED_ERROR_KM}`
+}
+
 // Public-facing site config for mrl-portfolio — unlike CompanyInfo (which is
 // invoicing-related and locked to logged-in users), this is readable by anyone.
 export const SiteSettings: GlobalConfig = {
@@ -53,8 +77,11 @@ export const SiteSettings: GlobalConfig = {
     {
       name: 'mapEmbedUrl',
       type: 'text',
-      validate: httpsUrl,
-      admin: { description: 'Google Maps "Embed a map" src URL, for the Contact Info block' },
+      validate: officialMapEmbedUrl,
+      admin: {
+        description:
+          'Google Maps → Share → Embed a map, then paste only the src link (starts with https://www.google.com/maps/embed?pb=). Empty shows the address panel instead.',
+      },
     },
     {
       name: 'agencyNotice',
