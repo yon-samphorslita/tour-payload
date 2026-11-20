@@ -203,6 +203,9 @@ export interface Media {
  */
 export interface WebsiteMedia {
   id: string;
+  /**
+   * Leave empty to use the file name.
+   */
   alt?: string | null;
   prefix?: string | null;
   _objectKey?: string | null;
