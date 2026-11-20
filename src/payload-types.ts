@@ -71,7 +71,6 @@ export interface Config {
     media: Media;
     'website-media': WebsiteMedia;
     sales: Sale;
-    'record-media': RecordMedia;
     purchases: Purchase;
     services: Service;
     'visa-countries': VisaCountry;
@@ -90,7 +89,6 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     'website-media': WebsiteMediaSelect<false> | WebsiteMediaSelect<true>;
     sales: SalesSelect<false> | SalesSelect<true>;
-    'record-media': RecordMediaSelect<false> | RecordMediaSelect<true>;
     purchases: PurchasesSelect<false> | PurchasesSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
     'visa-countries': VisaCountriesSelect<false> | VisaCountriesSelect<true>;
@@ -374,27 +372,6 @@ export interface Purchase {
   createdBy?: (string | null) | User;
   updatedAt: string;
   createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "record-media".
- */
-export interface RecordMedia {
-  id: string;
-  alt?: string | null;
-  category?: ('receipt' | 'invoice' | 'booking' | 'contract' | 'photo') | null;
-  uploadedBy?: (string | null) | User;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -692,10 +669,6 @@ export interface PayloadLockedDocument {
         value: string | Sale;
       } | null)
     | ({
-        relationTo: 'record-media';
-        value: string | RecordMedia;
-      } | null)
-    | ({
         relationTo: 'purchases';
         value: string | Purchase;
       } | null)
@@ -875,26 +848,6 @@ export interface SalesSelect<T extends boolean = true> {
   createdBy?: T;
   updatedAt?: T;
   createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "record-media_select".
- */
-export interface RecordMediaSelect<T extends boolean = true> {
-  alt?: T;
-  category?: T;
-  uploadedBy?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

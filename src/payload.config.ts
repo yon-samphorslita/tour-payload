@@ -14,7 +14,6 @@ import { Purchases } from './collections/Purchases'
 import { Services } from './collections/Services'
 import { VisaCountries } from './collections/VisaCountries'
 import { Enquiries } from './collections/Enquiries'
-import { RecordMedia } from './collections/RecordMedia'
 import { Clients } from './collections/Clients'
 import { ExchangeRates } from './collections/ExchangeRates'
 import { CompanyInfo } from './globals/CompanyInfo'
@@ -46,7 +45,6 @@ export default buildConfig({
     Media,
     WebsiteMedia,
     Sales,
-    RecordMedia,
     Purchases,
     Services,
     VisaCountries,
